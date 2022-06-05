@@ -1,0 +1,330 @@
+{% extends 'main.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+
+<!--new room design-->
+<style>
+
+    /* chat box sumu  */
+    
+    
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #4c4c6a;
+    border-radius: 2px;
+}
+
+
+.chatbox {
+
+    min-height:500px;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
+}
+
+.chat-window {
+    flex: auto;
+    max-height: calc(100% - 60px);
+    background: #030b2f;
+    overflow: auto;
+    height:500px;
+
+
+}
+
+.chat-input {
+    flex: 0 0 auto;
+    height: 60px;
+    background: #030b2f;
+    border-top: 1px solid #2671ff;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
+}
+
+.chat-input input {
+    height: 50px;
+    line-height: 60px;
+    outline: 0 none;
+    border: none;
+    border-radius: 20px;
+    width: calc(100% - 70px);
+    color: white;
+    text-indent: 10px;
+    font-size: 12pt;
+    padding: 0;
+    margin:5px;
+    background: #212949;
+}
+
+.chat-input button {
+    float: right;
+    outline: 0 none;
+    border: none;
+    background: transparent;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    padding: 2px 0 0 0;
+    margin: 10px;
+    transition: all 0.15s ease-in-out;
+}
+.chat-input button i{
+    color: white !important;
+    font-size: 30px;
+}
+
+.msg-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 10px 0;
+    padding: 10px;
+}
+
+.msg-box {
+    display: flex;
+    background: #3a4579;
+    padding: 10px 10px 0 10px;
+    border-radius: 0 6px 6px 0;
+    max-width: 80%;
+    width: auto;
+    float: left;
+    box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 4px rgba(0, 0, 0, .24);
+}
+
+.user-img {
+    display: inline-block;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    background: #2671ff;
+    margin: 0 10px 10px 0;
+}
+
+.flr {
+    /*flex: 1 0 auto;*/
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 50px);
+}
+
+.messages {
+    flex: 1 0 auto;
+}
+
+.msg {
+    display: inline-block;
+    font-size: 11pt;
+    line-height: 13pt;
+    color: rgba(255, 255, 255, .7);
+    margin: 0 0 4px 0;
+}
+
+.msg:first-of-type {
+    margin-top: 8px;
+}
+
+.timestamp {
+    font-size: 12px;
+    margin-bottom: 10px;
+    color: burlywood;
+}
+.timestamp span a {
+    color: #d4ed87;
+    font-size: 15px;
+}
+
+.username {
+    margin-right: 3px;
+}
+
+.posttime {
+    margin-left: 3px;
+}
+
+/*.msg-self .msg-box {
+    border-radius: 6px 0 0 6px;
+    background: #2671ff;
+    float: right;
+}
+
+.msg-self .user-img {
+    margin: 0 0 10px 10px;
+}
+
+.msg-self .msg {
+    text-align: right;
+}
+
+.msg-self .timestamp {
+    text-align: right;
+}
+    
+    /* chat box sumu  */
+
+    .room-container{
+    display:grid;
+    grid-template-columns:3fr 1fr;
+    grid-gap:25px;
+    margin-top:-25px;
+
+    }
+    .room-box {
+
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 25px;
+
+
+
+    margin-bottom: 10px;
+    position: relative;
+}
+.msg-send-box form {
+    position: relative;
+    border-top: 1px solid;
+}
+
+
+.participate-box {
+    border: 2px solid darkmagenta;
+    padding: 15px;
+}
+.participant h3 {
+    font-weight: 600;
+    font-family: monospace;
+    border-bottom: 3px solid cornflowerblue;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.participant p {
+    border: 1px solid;
+    padding: 5px 10px;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: monospace;
+    background: black;
+    color: white;
+    margin-bottom: 10px;
+    display: table;
+}
+.accordion-body p{
+color:white;
+}
+
+.conversation-text{
+    text-align: center;
+    display: inline-flex;
+    background: #030b2f;
+    margin-left: 50px;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px 5px 0 0;
+
+    }
+.conversation-text i {
+    font-size: 23px;
+    margin-left: 6px;
+}
+
+
+</style>
+<!--End of style-->
+
+<div class="accordion w-100 m-auto my-3" id="accordionPanelsStayOpenExample">
+
+    <div class="accordion-item mx-5 bg-dark">
+        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+            <button class="accordion-button btn btn-dark" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne">
+                {{room.name}} [ Room Description ]
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
+             aria-labelledby="panelsStayOpen-headingOne">
+            <div class="accordion-body">
+                <pre>
+                <p>{{ room.description }} </p>
+                </pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<h2>{{room.name}}</h2>-->
+<!--<p>{{ room.description }}</p>-->
+
+<div class="conversation-text">
+
+    <h3 class=""> Conversation</h3>
+    <span>
+         <i class="fa-solid fa-comment"></i>
+    </span>
+</div>
+
+<div class="room-container">
+
+    <div class="room-box">
+
+        <section class="chatbox">
+            <div class="chat-window">
+                {% for msg in room_message %}
+                <article class="msg-container msg-remote" id="msg-0">
+                    <div class="msg-box">
+
+                        <img class="user-img" src="{{ msg.user.avatar.url }}">
+                        <div class="flr">
+                            <div class="messages">
+                                <p class="msg" id="msg-0">
+                                    {{ msg.body }}
+                                </p>
+                            </div>
+                            <span class="timestamp">
+                                    <span class="username">
+                                        <a href="{% url 'user-profile' msg.user.id %}">
+                                              <small>@{{ msg.user.username }}</small>
+                                        </a>
+                                    </span>
+                                    <span class="posttime">{{ msg.created|timesince }}</span>
+                                </span>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+
+            </div>
+            <div class="msg-send-box">
+                <form class="chat-input" method="POST" action="">
+                    {% csrf_token %}
+                    
+                    <input type="text" name="msg_body" autocomplete="on" placeholder="Type a message"/>
+                    <button>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!--  perticipate -->
+    <div class="participate-box">
+        <div class="participant">
+            <h3>Perticipant's</h3>
+            {% for user in participants %}
+
+            <p>@{{ user.username }}</p>
+
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
